@@ -1,0 +1,14 @@
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/SaucedemoApplication.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/config/DataSeeder.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/controller/CartController.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/controller/ProductController.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/dto/AddToCartRequest.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/dto/UpdateCartItemRequest.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/model/CartItem.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/model/Product.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/repository/CartItemRepository.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/repository/ProductRepository.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/service/CartService.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/service/ProductService.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/service/interfaces/ICartService.java
+/home/barrera/Documentos/Udea/2026-2/Calidad/calidad-de-software/SauceDemo/backend/src/main/java/com/saucedemo/service/interfaces/IProductService.java
