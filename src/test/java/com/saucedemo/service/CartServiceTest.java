@@ -36,16 +36,16 @@ class CartServiceTest {
     @Test
     @DisplayName("getCart devuelve los items asociados a la sesión")
     void get_cart_returns_items_for_session() {
-        // Arrange
+        
         CartItem item1 = new CartItem(SESSION_ID, buildProduct(1L), 2);
         CartItem item2 = new CartItem(SESSION_ID, buildProduct(2L), 1);
         when(cartItemRepository.findBySessionId(SESSION_ID))
                 .thenReturn(List.of(item1, item2));
 
-        // Act
+        
         List<CartItem> result = cartService.getCart(SESSION_ID);
 
-        // Assert
+        
         assertAll("carrito de la sesión",
                 () -> assertNotNull(result),
                 () -> assertEquals(2, result.size()),
@@ -57,13 +57,13 @@ class CartServiceTest {
     @Test
     @DisplayName("getCart devuelve lista vacía cuando la sesión no tiene items")
     void get_cart_returns_empty_list_when_no_items() {
-        // Arrange
+        
         when(cartItemRepository.findBySessionId(SESSION_ID)).thenReturn(List.of());
 
-        // Act
+        
         List<CartItem> result = cartService.getCart(SESSION_ID);
 
-        // Assert
+        
         assertAll("carrito vacío",
                 () -> assertNotNull(result),
                 () -> assertTrue(result.isEmpty())
@@ -74,7 +74,7 @@ class CartServiceTest {
     @Test
     @DisplayName("addToCart crea un nuevo item cuando el producto no está en el carrito")
     void add_to_cart_creates_new_item() {
-        // Arrange
+        
         Long productId = 1L;
         Integer quantity = 3;
         Product product = buildProduct(productId);
@@ -83,10 +83,10 @@ class CartServiceTest {
         when(cartItemRepository.findBySessionIdAndProductId(SESSION_ID, productId)).thenReturn(Optional.empty());
         when(cartItemRepository.save(any(CartItem.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        // Act
+        
         CartItem result = cartService.addToCart(SESSION_ID, productId, quantity);
 
-        // Assert
+        
         assertAll("nuevo item creado",
                 () -> assertNotNull(result),
                 () -> assertEquals(SESSION_ID, result.getSessionId()),
@@ -99,7 +99,7 @@ class CartServiceTest {
     @Test
     @DisplayName("addToCart acumula la cantidad cuando el producto ya está en el carrito")
     void add_to_cart_updates_existing_item() {
-        // Arrange
+        
         Long productId = 1L;
         Integer existingQuantity = 2;
         Integer addedQuantity = 3;
@@ -110,10 +110,10 @@ class CartServiceTest {
         when(cartItemRepository.findBySessionIdAndProductId(SESSION_ID, productId)).thenReturn(Optional.of(existing));
         when(cartItemRepository.save(existing)).thenReturn(existing);
 
-        // Act
+        
         CartItem result = cartService.addToCart(SESSION_ID, productId, addedQuantity);
 
-        // Assert
+        
         assertAll("item existente actualizado",
                 () -> assertNotNull(result),
                 () -> assertEquals(existingQuantity + addedQuantity, result.getQuantity())
@@ -124,11 +124,11 @@ class CartServiceTest {
     @Test
     @DisplayName("addToCart lanza NoSuchElementException cuando el producto no existe")
     void add_to_cart_throws_when_product_not_found() {
-        // Arrange
+        
         Long productId = 99L;
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
-        // Act + Assert
+        
         NoSuchElementException ex = assertThrows(
                 NoSuchElementException.class,
                 () -> cartService.addToCart(SESSION_ID, productId, 1)
@@ -142,7 +142,7 @@ class CartServiceTest {
     @Test
     @DisplayName("updateQuantity actualiza la cantidad del item existente")
     void update_quantity_updates_existing_item() {
-        // Arrange
+        
         Long itemId = 10L;
         Integer newQuantity = 5;
         CartItem item = new CartItem(SESSION_ID, buildProduct(1L), 1);
@@ -151,10 +151,10 @@ class CartServiceTest {
         when(cartItemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(cartItemRepository.save(item)).thenReturn(item);
 
-        // Act
+        
         CartItem result = cartService.updateQuantity(itemId, newQuantity);
 
-        // Assert
+        
         assertAll("cantidad actualizada",
                 () -> assertNotNull(result),
                 () -> assertEquals(newQuantity, result.getQuantity())
@@ -164,11 +164,11 @@ class CartServiceTest {
     @Test
     @DisplayName("updateQuantity lanza NoSuchElementException cuando el item no existe")
     void update_quantity_throws_when_item_not_found() {
-        // Arrange
+        
         Long itemId = 99L;
         when(cartItemRepository.findById(itemId)).thenReturn(Optional.empty());
 
-        // Act + Assert
+        
         NoSuchElementException ex = assertThrows(
                 NoSuchElementException.class,
                 () -> cartService.updateQuantity(itemId, 4)
@@ -181,27 +181,27 @@ class CartServiceTest {
     @Test
     @DisplayName("removeItem delega el borrado en el repositorio")
     void remove_item_delegates_to_repository() {
-        // Arrange
+    
         Long itemId = 7L;
 
-        // Act
+        
         cartService.removeItem(itemId);
 
-        // Assert
+        
         verify(cartItemRepository, times(1)).deleteById(itemId);
     }
 
     @Test
     @DisplayName("getCart interactúa con el repositorio exactamente una vez con el sessionId provisto")
     void get_cart_verifies_repository_interaction() {
-        // Arrange
+        
         String specificSession = "session-custom-abc";
         when(cartItemRepository.findBySessionId(specificSession)).thenReturn(List.of());
 
-        // Act
+        
         List<CartItem> result = cartService.getCart(specificSession);
 
-        // Assert
+        
         assertNotNull(result);
         verify(cartItemRepository, times(1)).findBySessionId(specificSession);
         verifyNoMoreInteractions(cartItemRepository);
@@ -210,17 +210,17 @@ class CartServiceTest {
     @Test
     @DisplayName("getCart retorna un único item con todos sus detalles cuando la sesión tiene 1 producto")
     void get_cart_returns_single_item_with_complete_details() {
-        // Arrange
+        
         Product product = buildProduct(100L);
         CartItem singleItem = new CartItem(SESSION_ID, product, 4);
         singleItem.setId(50L);
 
         when(cartItemRepository.findBySessionId(SESSION_ID)).thenReturn(List.of(singleItem));
 
-        // Act
+        
         List<CartItem> result = cartService.getCart(SESSION_ID);
 
-        // Assert
+        
         assertAll("un solo item en el carrito",
                 () -> assertEquals(1, result.size()),
                 () -> assertEquals(50L, result.get(0).getId()),
@@ -234,11 +234,11 @@ class CartServiceTest {
     @Test
     @DisplayName("addToCart no llama a save en el repositorio cuando el producto no es encontrado")
     void add_to_cart_never_saves_when_product_not_found() {
-        // Arrange
+        
         Long invalidProductId = 999L;
         when(productRepository.findById(invalidProductId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        
         NoSuchElementException ex = assertThrows(
                 NoSuchElementException.class,
                 () -> cartService.addToCart(SESSION_ID, invalidProductId, 2)
@@ -253,7 +253,7 @@ class CartServiceTest {
     @Test
     @DisplayName("addToCart guarda un nuevo item y verifica interacciones completas con repositorios")
     void add_to_cart_creates_new_item_and_verifies_all_interactions() {
-        // Arrange
+        
         Long productId = 5L;
         Integer quantity = 2;
         Product product = buildProduct(productId);
@@ -266,10 +266,10 @@ class CartServiceTest {
             return item;
         });
 
-        // Act
+        
         CartItem result = cartService.addToCart(SESSION_ID, productId, quantity);
 
-        // Assert
+        
         assertAll("nuevo item con id generado",
                 () -> assertNotNull(result),
                 () -> assertEquals(123L, result.getId()),
@@ -286,7 +286,7 @@ class CartServiceTest {
     @Test
     @DisplayName("addToCart suma correctamente cantidades grandes en item existente")
     void add_to_cart_accumulates_large_quantity_on_existing_item() {
-        // Arrange
+        
         Long productId = 2L;
         Integer initialQty = 10;
         Integer addedQty = 15;
@@ -298,10 +298,10 @@ class CartServiceTest {
         when(cartItemRepository.findBySessionIdAndProductId(SESSION_ID, productId)).thenReturn(Optional.of(existingItem));
         when(cartItemRepository.save(existingItem)).thenReturn(existingItem);
 
-        // Act
+    
         CartItem result = cartService.addToCart(SESSION_ID, productId, addedQty);
 
-        // Assert
+        
         assertAll("cantidad acumulada",
                 () -> assertNotNull(result),
                 () -> assertEquals(88L, result.getId()),
@@ -314,11 +314,11 @@ class CartServiceTest {
     @Test
     @DisplayName("updateQuantity no llama a save cuando el item del carrito no existe")
     void update_quantity_never_saves_when_item_not_found() {
-        // Arrange
+        
         Long invalidItemId = 888L;
         when(cartItemRepository.findById(invalidItemId)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        
         NoSuchElementException ex = assertThrows(
                 NoSuchElementException.class,
                 () -> cartService.updateQuantity(invalidItemId, 10)
@@ -332,7 +332,7 @@ class CartServiceTest {
     @Test
     @DisplayName("updateQuantity actualiza la cantidad a cero correctamente")
     void update_quantity_sets_zero_quantity() {
-        // Arrange
+        
         Long itemId = 15L;
         Integer newQuantity = 0;
         CartItem item = new CartItem(SESSION_ID, buildProduct(1L), 3);
@@ -341,10 +341,10 @@ class CartServiceTest {
         when(cartItemRepository.findById(itemId)).thenReturn(Optional.of(item));
         when(cartItemRepository.save(item)).thenReturn(item);
 
-        // Act
+        
         CartItem result = cartService.updateQuantity(itemId, newQuantity);
 
-        // Assert
+        
         assertAll("cantidad actualizada a cero",
                 () -> assertNotNull(result),
                 () -> assertEquals(itemId, result.getId()),
@@ -357,13 +357,13 @@ class CartServiceTest {
     @Test
     @DisplayName("removeItem llama a deleteById con el itemId correcto")
     void remove_item_calls_delete_by_id_with_correct_id() {
-        // Arrange
+        
         Long itemId = 42L;
 
-        // Act
+        
         cartService.removeItem(itemId);
 
-        // Assert
+        
         verify(cartItemRepository, times(1)).deleteById(42L);
         verifyNoInteractions(productRepository);
     }
