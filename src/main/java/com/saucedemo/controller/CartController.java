@@ -3,7 +3,6 @@ package com.saucedemo.controller;
 import com.saucedemo.dto.AddToCartRequest;
 import com.saucedemo.dto.UpdateCartItemRequest;
 import com.saucedemo.model.CartItem;
-import com.saucedemo.service.CartService;
 import com.saucedemo.service.interfaces.ICartService;
 
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ public class CartController {
 
     private final ICartService cartService;
 
-    public CartController(CartService cartService) {
+    public CartController(ICartService cartService) {
         this.cartService = cartService;
     }
 
