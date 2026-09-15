@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.saucedemo.service.ProductServiceTest" time="0.036" tests="8" errors="0" skipped="0" failures="0" flakes="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.saucedemo.service.CartServiceTest" time="0.276" tests="16" errors="0" skipped="0" failures="0" flakes="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -58,12 +58,20 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="get_all_products_returns_list" classname="com.saucedemo.service.ProductServiceTest" time="0.005"/>
-  <testcase name="get_all_products_returns_single_product_with_all_attributes" classname="com.saucedemo.service.ProductServiceTest" time="0.006"/>
-  <testcase name="get_product_by_id_returns_all_details" classname="com.saucedemo.service.ProductServiceTest" time="0.002"/>
-  <testcase name="get_all_products_returns_empty_list" classname="com.saucedemo.service.ProductServiceTest" time="0.004"/>
-  <testcase name="search_product_by_id_not_found" classname="com.saucedemo.service.ProductServiceTest" time="0.003"/>
-  <testcase name="search_product_by_id_valid" classname="com.saucedemo.service.ProductServiceTest" time="0.005"/>
-  <testcase name="get_product_by_id_verifies_repository_interaction" classname="com.saucedemo.service.ProductServiceTest" time="0.003"/>
-  <testcase name="get_all_products_verifies_repository_interaction" classname="com.saucedemo.service.ProductServiceTest" time="0.001"/>
+  <testcase name="add_to_cart_creates_new_item_and_verifies_all_interactions" classname="com.saucedemo.service.CartServiceTest" time="0.203"/>
+  <testcase name="get_cart_verifies_repository_interaction" classname="com.saucedemo.service.CartServiceTest" time="0.012"/>
+  <testcase name="get_cart_returns_items_for_session" classname="com.saucedemo.service.CartServiceTest" time="0.004"/>
+  <testcase name="add_to_cart_updates_existing_item" classname="com.saucedemo.service.CartServiceTest" time="0.003"/>
+  <testcase name="add_to_cart_never_saves_when_product_not_found" classname="com.saucedemo.service.CartServiceTest" time="0.005"/>
+  <testcase name="remove_item_delegates_to_repository" classname="com.saucedemo.service.CartServiceTest" time="0.004"/>
+  <testcase name="add_to_cart_throws_when_product_not_found" classname="com.saucedemo.service.CartServiceTest" time="0.007"/>
+  <testcase name="add_to_cart_creates_new_item" classname="com.saucedemo.service.CartServiceTest" time="0.0"/>
+  <testcase name="update_quantity_throws_when_item_not_found" classname="com.saucedemo.service.CartServiceTest" time="0.006"/>
+  <testcase name="remove_item_calls_delete_by_id_with_correct_id" classname="com.saucedemo.service.CartServiceTest" time="0.0"/>
+  <testcase name="get_cart_returns_empty_list_when_no_items" classname="com.saucedemo.service.CartServiceTest" time="0.005"/>
+  <testcase name="add_to_cart_accumulates_large_quantity_on_existing_item" classname="com.saucedemo.service.CartServiceTest" time="0.001"/>
+  <testcase name="update_quantity_sets_zero_quantity" classname="com.saucedemo.service.CartServiceTest" time="0.0"/>
+  <testcase name="update_quantity_never_saves_when_item_not_found" classname="com.saucedemo.service.CartServiceTest" time="0.01"/>
+  <testcase name="get_cart_returns_single_item_with_complete_details" classname="com.saucedemo.service.CartServiceTest" time="0.003"/>
+  <testcase name="update_quantity_updates_existing_item" classname="com.saucedemo.service.CartServiceTest" time="0.005"/>
 </testsuite>

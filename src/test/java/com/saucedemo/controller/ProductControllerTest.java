@@ -103,6 +103,87 @@ class ProductControllerTest {
         
     }
 
+    @Test
+    @DisplayName("getAllProducts verifica la delegación completa a productService.getAllProducts()")
+    void get_all_products_verifies_service_call() {
+        // Arrange
+        when(productService.getAllProducts()).thenReturn(List.of());
+
+        // Act
+        productController.getAllProducts();
+
+        // Assert
+        verify(productService, times(1)).getAllProducts();
+        verifyNoMoreInteractions(productService);
+    }
+
+    @Test
+    @DisplayName("getAllProducts retorna un solo producto en la lista correctamente")
+    void get_all_products_returns_single_product_list() {
+        // Arrange
+        Product bikeLight = buildProduct(2L, "Sauce Labs Bike Light");
+        when(productService.getAllProducts()).thenReturn(List.of(bikeLight));
+
+        // Act
+        List<Product> result = productController.getAllProducts();
+
+        // Assert
+        assertAll("lista con un producto",
+                () -> assertNotNull(result),
+                () -> assertEquals(1, result.size()),
+                () -> assertEquals(2L, result.get(0).getId()),
+                () -> assertEquals("Sauce Labs Bike Light", result.get(0).getName())
+        );
+    }
+
+    @Test
+    @DisplayName("getProductById verifica la llamada al servicio con el ID específico")
+    void get_product_by_id_verifies_service_call() {
+        // Arrange
+        Long id = 5L;
+        when(productService.getProductById(id)).thenReturn(Optional.empty());
+
+        // Act
+        productController.getProductById(id);
+
+        // Assert
+        verify(productService, times(1)).getProductById(5L);
+        verifyNoMoreInteractions(productService);
+    }
+
+    @Test
+    @DisplayName("getProductById devuelve 200 OK con todos los atributos del producto")
+    void get_product_by_id_returns_complete_product_attributes() {
+        // Arrange
+        Long id = 3L;
+        Product onesie = new Product(
+                "0003",
+                "Sauce Labs Onesie",
+                "Short description",
+                "Detailed long description",
+                7.99,
+                "https://saucedemo.com/onesie.jpg"
+        );
+        onesie.setId(id);
+        when(productService.getProductById(id)).thenReturn(Optional.of(onesie));
+
+        // Act
+        ResponseEntity<Product> response = productController.getProductById(id);
+
+        // Assert
+        assertAll("todos los campos del producto",
+                () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
+                () -> assertNotNull(response.getBody()),
+                () -> assertEquals(id, response.getBody().getId()),
+                () -> assertEquals("0003", response.getBody().getCode()),
+                () -> assertEquals("Sauce Labs Onesie", response.getBody().getName()),
+                () -> assertEquals("Short description", response.getBody().getDescription()),
+                () -> assertEquals("Detailed long description", response.getBody().getDetailDescription()),
+                () -> assertEquals(7.99, response.getBody().getPrice()),
+                () -> assertEquals("https://saucedemo.com/onesie.jpg", response.getBody().getImageUrl())
+        );
+    }
+
     private Product buildProduct(Long id, String name) {
         Product product = new Product(
                 "000" + id,

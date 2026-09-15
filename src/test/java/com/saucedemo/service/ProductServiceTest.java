@@ -110,4 +110,96 @@ class ProductServiceTest {
         );
 
     }
+
+    @Test
+    @DisplayName("getAllProducts verifica la interacción con productRepository.findAll")
+    void get_all_products_verifies_repository_interaction() {
+        // Arrange
+        when(productRepository.findAll()).thenReturn(List.of());
+
+        // Act
+        productService.getAllProducts();
+
+        // Assert
+        verify(productRepository, times(1)).findAll();
+        verifyNoMoreInteractions(productRepository);
+    }
+
+    @Test
+    @DisplayName("getAllProducts retorna un solo producto con todos sus atributos intactos")
+    void get_all_products_returns_single_product_with_all_attributes() {
+        // Arrange
+        Product onesie = new Product(
+                "0003",
+                "Sauce Labs Onesie",
+                "Rib snap infant onesie for the junior automation engineer",
+                "Detailed description of onesie",
+                7.99,
+                "https://www.saucedemo.com/static/media/red-onesie.jpg"
+        );
+        onesie.setId(3L);
+        when(productRepository.findAll()).thenReturn(List.of(onesie));
+
+        // Act
+        List<Product> result = productService.getAllProducts();
+
+        // Assert
+        assertAll("un producto",
+                () -> assertEquals(1, result.size()),
+                () -> assertEquals(3L, result.get(0).getId()),
+                () -> assertEquals("0003", result.get(0).getCode()),
+                () -> assertEquals("Sauce Labs Onesie", result.get(0).getName()),
+                () -> assertEquals("Rib snap infant onesie for the junior automation engineer", result.get(0).getDescription()),
+                () -> assertEquals("Detailed description of onesie", result.get(0).getDetailDescription()),
+                () -> assertEquals(7.99, result.get(0).getPrice()),
+                () -> assertEquals("https://www.saucedemo.com/static/media/red-onesie.jpg", result.get(0).getImageUrl())
+        );
+    }
+
+    @Test
+    @DisplayName("getProductById verifica la interacción con productRepository.findById")
+    void get_product_by_id_verifies_repository_interaction() {
+        // Arrange
+        Long productId = 10L;
+        when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        // Act
+        productService.getProductById(productId);
+
+        // Assert
+        verify(productRepository, times(1)).findById(productId);
+        verifyNoMoreInteractions(productRepository);
+    }
+
+    @Test
+    @DisplayName("getProductById retorna todos los detalles del producto cuando existe")
+    void get_product_by_id_returns_all_details() {
+        // Arrange
+        Long id = 4L;
+        Product fleeceJacket = new Product(
+                "0004",
+                "Sauce Labs Fleece Jacket",
+                "It's not every day that you come across a midweight quarter-zip fleece jacket",
+                "Detailed description fleece jacket",
+                49.99,
+                "https://www.saucedemo.com/static/media/sauce-pullover.jpg"
+        );
+        fleeceJacket.setId(id);
+        when(productRepository.findById(id)).thenReturn(Optional.of(fleeceJacket));
+
+        // Act
+        Optional<Product> result = productService.getProductById(id);
+
+        // Assert
+        assertAll("detalles de chaqueta",
+                () -> assertTrue(result.isPresent()),
+                () -> assertEquals(id, result.get().getId()),
+                () -> assertEquals("0004", result.get().getCode()),
+                () -> assertEquals("Sauce Labs Fleece Jacket", result.get().getName()),
+                () -> assertEquals("It's not every day that you come across a midweight quarter-zip fleece jacket", result.get().getDescription()),
+                () -> assertEquals("Detailed description fleece jacket", result.get().getDetailDescription()),
+                () -> assertEquals(49.99, result.get().getPrice()),
+                () -> assertEquals("https://www.saucedemo.com/static/media/sauce-pullover.jpg", result.get().getImageUrl())
+        );
+    }
 }

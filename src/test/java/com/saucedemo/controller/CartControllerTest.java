@@ -4,6 +4,7 @@ import com.saucedemo.dto.AddToCartRequest;
 import com.saucedemo.dto.UpdateCartItemRequest;
 import com.saucedemo.model.CartItem;
 import com.saucedemo.model.Product;
+import com.saucedemo.service.CartService;
 import com.saucedemo.service.interfaces.ICartService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ class CartControllerTest {
     private static final String SESSION_ID = "session-123";
 
     @Mock
-    private ICartService cartService;
+    private CartService cartService;
 
     @InjectMocks
     private CartController cartController;
@@ -156,6 +157,109 @@ class CartControllerTest {
 
         // Assert
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("getCart devuelve lista vacía cuando el servicio no tiene items para la sesión")
+    void get_cart_returns_empty_list_when_service_returns_empty() {
+        // Arrange
+        String emptySession = "empty-session";
+        when(cartService.getCart(emptySession)).thenReturn(List.of());
+
+        // Act
+        List<CartItem> result = cartController.getCart(emptySession);
+
+        // Assert
+        assertAll("carrito vacío",
+                () -> assertNotNull(result),
+                () -> assertTrue(result.isEmpty())
+        );
+        verify(cartService, times(1)).getCart(emptySession);
+    }
+
+    @Test
+    @DisplayName("getCart devuelve múltiples items y verifica la delegación completa al servicio")
+    void get_cart_returns_multiple_items_and_verifies_service_call() {
+        // Arrange
+        CartItem item1 = new CartItem(SESSION_ID, buildProduct(1L), 2);
+        CartItem item2 = new CartItem(SESSION_ID, buildProduct(2L), 5);
+        when(cartService.getCart(SESSION_ID)).thenReturn(List.of(item1, item2));
+
+        // Act
+        List<CartItem> result = cartController.getCart(SESSION_ID);
+
+        // Assert
+        assertAll("múltiples items",
+                () -> assertNotNull(result),
+                () -> assertEquals(2, result.size()),
+                () -> assertEquals(2, result.get(0).getQuantity()),
+                () -> assertEquals(5, result.get(1).getQuantity())
+        );
+        verify(cartService, times(1)).getCart(SESSION_ID);
+    }
+
+    @Test
+    @DisplayName("addToCart pasa los parámetros exactos del request al servicio")
+    void add_to_cart_verifies_exact_service_arguments() {
+        // Arrange
+        AddToCartRequest request = new AddToCartRequest();
+        request.setSessionId("custom-session-xyz");
+        request.setProductId(42L);
+        request.setQuantity(10);
+
+        CartItem created = new CartItem("custom-session-xyz", buildProduct(42L), 10);
+        when(cartService.addToCart("custom-session-xyz", 42L, 10)).thenReturn(created);
+
+        // Act
+        ResponseEntity<CartItem> response = cartController.addToCart(request);
+
+        // Assert
+        assertAll("respuesta de addToCart",
+                () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
+                () -> assertNotNull(response.getBody()),
+                () -> assertEquals("custom-session-xyz", response.getBody().getSessionId()),
+                () -> assertEquals(10, response.getBody().getQuantity())
+        );
+        verify(cartService, times(1)).addToCart("custom-session-xyz", 42L, 10);
+    }
+
+    @Test
+    @DisplayName("updateQuantity pasa los parámetros exactos de itemId y quantity al servicio")
+    void update_quantity_verifies_exact_service_arguments() {
+        // Arrange
+        Long itemId = 55L;
+        UpdateCartItemRequest request = new UpdateCartItemRequest();
+        request.setQuantity(8);
+
+        CartItem updated = new CartItem(SESSION_ID, buildProduct(1L), 8);
+        updated.setId(itemId);
+        when(cartService.updateQuantity(itemId, 8)).thenReturn(updated);
+
+        // Act
+        ResponseEntity<CartItem> response = cartController.updateQuantity(itemId, request);
+
+        // Assert
+        assertAll("respuesta de updateQuantity",
+                () -> assertEquals(HttpStatus.OK, response.getStatusCode()),
+                () -> assertNotNull(response.getBody()),
+                () -> assertEquals(itemId, response.getBody().getId()),
+                () -> assertEquals(8, response.getBody().getQuantity())
+        );
+        verify(cartService, times(1)).updateQuantity(itemId, 8);
+    }
+
+    @Test
+    @DisplayName("removeItem delega correctamente la eliminación al servicio con el id especificado")
+    void remove_item_verifies_service_invocation() {
+        // Arrange
+        Long itemId = 99L;
+
+        // Act
+        ResponseEntity<Void> response = cartController.removeItem(itemId);
+
+        // Assert
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(cartService, times(1)).removeItem(itemId);
     }
 
 
